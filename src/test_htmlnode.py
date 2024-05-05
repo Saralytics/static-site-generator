@@ -1,11 +1,11 @@
 import unittest
-from htmlnode import HTMLNode, LeafNode
+from htmlnode import HTMLNode, LeafNode, ParentNode
 
 
 class TestHTMLNode(unittest.TestCase):
     def test_node_create(self):
         node = HTMLNode(tag="p", value="this is a paragraph")
-        expected = """HTMLNode(p, this is a paragraph, None, None). Props are None"""
+        expected = """HTMLNode(p, this is a paragraph, None, None)."""
         self.assertEqual(node.__repr__(), expected)
 
     def test_props_to_html(self):
@@ -20,7 +20,7 @@ class TestHTMLNode(unittest.TestCase):
 class TestLeafNode(unittest.TestCase):
     def test_node_create(self):
         node = LeafNode(tag="p", value="this is a paragraph")
-        expected = """HTMLNode(p, this is a paragraph, None). Props are None"""
+        expected = """HTMLNode(p, this is a paragraph, None)."""
         self.assertEqual(node.__repr__(), expected)
 
     def test_node_create_no_value(self):
@@ -43,8 +43,22 @@ class TestLeafNode(unittest.TestCase):
         self.assertEqual(node.to_html(), expected)
 
 
-# <p>This is a paragraph of text.</p>
-# <a href="https://www.google.com">Click me!</a>
+class TestParentNode(unittest.TestCase):
+    def test_node_no_nesting(self):
+        node = ParentNode(
+            "p",
+            [
+                LeafNode("b", "Bold text"),
+                LeafNode(None, "Normal text"),
+                LeafNode("i", "italic text"),
+                LeafNode(None, "Normal text"),
+            ],
+        )
+
+        expected = "<p><b>Bold text</b>Normal text<i>italic text</i>Normal text</p>"
+
+        self.assertEqual(node.to_html(), expected)
+
 
 if __name__ == "__main__":
     unittest.main()
